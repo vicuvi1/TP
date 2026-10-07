@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-07T19:16:20.259867",
+  "status_code": 200,
+  "final_url": "https://cybercor.org/",
+  "title": "CYBERCOR",
+  "ip_address": "172.67.211.96",
+  "redirect_chain": [
+    "301 -> https://cybercor.org/"
+  ],
+  "security_score": "3/5",
+  "certificate_days_left": 57,
+  "internal_links": 1,
+  "external_links": 0,
+  "disallowed_paths": []
+}
