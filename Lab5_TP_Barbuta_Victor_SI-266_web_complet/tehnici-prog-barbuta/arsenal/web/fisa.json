@@ -1,0 +1,9 @@
+{
+  "tinta": "http://192.168.56.101",
+  "server": "Apache/2.2.8 (Ubuntu) DAV/2",
+  "directoare": [
+    "login",
+    "test",
+    "phpmyadmin"
+  ]
+}
