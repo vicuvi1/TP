@@ -1,22 +1,18 @@
 import requests
 
 SITES = [
-    # Pagini obișnuite (Părțile 2, 3 și 4)
     "https://example.com",
     "https://httpbin.org/html",
     "https://httpbin.org/json",
     "https://httpbin.org/status/200",
     "https://httpbin.org/redirect/1",
     "https://httpbin.org/delay/2",
-    # Pagini care eșuează
     "https://httpbin.org/status/404",
     "https://httpbin.org/status/500",
     "https://httpbin.org/delay/10",
     "http://this-site-does-not-exist.invalid",
-    # Anteturi de securitate (Partea 5)
     "https://httpbin.org/response-headers?X-Frame-Options=DENY&X-Content-Type-Options=nosniff",
     "https://httpbin.org/response-headers?x-frame-options=DENY",
-    # Răspunde aleatoriu cu 200 sau 500 (Partea 6)
     "https://httpbin.org/status/200,500",
 ]
 
@@ -28,9 +24,17 @@ SECURITY_HEADERS = [
 ]
 
 
+def short_error(e):
+    """Transforma o exceptie requests intr-un mesaj scurt."""
+    if isinstance(e, requests.Timeout):
+        return "timeout (peste 5 secunde)"
+    if isinstance(e, requests.ConnectionError):
+        return "conexiune esuata (site inexistent sau inaccesibil)"
+    return "cerere esuata: " + type(e).__name__
+
+
 def build_url(host, path):
     """Returneaza o adresa completa, de exemplu https://example.com/login."""
-    # scoatem "/" de la inceputul lui path ca sa nu iasa "//"
     return "https://" + host + "/" + path.lstrip("/")
 
 
@@ -41,9 +45,14 @@ def is_https(url):
 
 def show_response(url):
     """Trimite un GET la url si afiseaza statusul si Content-Type."""
-    r = requests.get(url, timeout=5)
+    try:
+        r = requests.get(url, timeout=5)
+    except requests.RequestException as e:
+        print("Eroare:", short_error(e))
+        return
+
     print("Status:", r.status_code)
-    print("Content-Type:", r.headers.get("Content-Type"))
+    print("Content-Type:", r.headers.get("Content-Type", "unknown"))
 
 
 def check_site(url):
@@ -51,7 +60,7 @@ def check_site(url):
     try:
         r = requests.get(url, timeout=5)
     except requests.RequestException as e:
-        return {"status": None, "error": str(e)}
+        return {"status": None, "error": short_error(e)}
 
     return {
         "status": r.status_code,
@@ -69,13 +78,11 @@ def scan_sites():
         res["url"] = url
         results.append(res)
 
-    # pastram doar site-urile cu status 200
     working = [res for res in results if res.get("status") == 200]
-    # sortam dupa length, cel mai mare primul
     working.sort(key=lambda res: res["length"], reverse=True)
 
     for res in working:
-        print(res["url"], "->", res["status"], ",", res["length"], "octeti")
+        print(f"{res['url']} -> {res['status']}, {res['length']} octeti")
 
     failed = len(results) - len(working)
     print("Reusite:", len(working), "| Esuate:", failed)
@@ -86,12 +93,11 @@ def check_headers(url):
     try:
         r = requests.get(url, timeout=5)
     except requests.RequestException as e:
-        return {"status": None, "error": str(e)}
+        return {"status": None, "error": short_error(e)}
 
     present = []
     missing = []
     for header in SECURITY_HEADERS:
-        # r.headers nu tine cont de majuscule
         if header in r.headers:
             present.append(header)
         else:
@@ -112,12 +118,12 @@ def retry_check(url, attempts=3):
         try:
             r = requests.get(url, timeout=5)
         except requests.RequestException as e:
-            error = str(e)
-            continue  # conexiune picata -> mai incercam
+            error = short_error(e)
+            continue
 
         status = r.status_code
         if status < 500:
-            break  # o eroare 4xx nu dispare daca reincerci
+            break
 
     result = {"status": status, "attempts": tries}
     if status is None:
