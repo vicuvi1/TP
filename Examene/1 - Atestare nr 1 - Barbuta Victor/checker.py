@@ -27,14 +27,14 @@ SECURITY_HEADERS = [
     "X-Content-Type-Options",
 ]
 
-# timeout-ul cerut in toate partile, ca sa nu il scriu de fiecare data
+# timeoutul cerut in toate partile, ca sa nu il scriu de fiecare data
 TIMEOUT = 5
 
 
 # functie ajutatoare: din exceptia lui requests facem un mesaj scurt
 def short_error(e):
     """Transforma o exceptie requests intr-un mesaj scurt."""
-    # Timeout trebuie verificat primul, ConnectTimeout e si Timeout si ConnectionError
+    # Timeout trebuie verificat primul ConnectTimeout e si Timeout si ConnectionError
     if isinstance(e, requests.Timeout):
         return "timeout (peste 5 secunde)"
     if isinstance(e, requests.ConnectionError):
